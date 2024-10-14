@@ -13,14 +13,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private UserServiceImpl userService;
+    //private UserServiceImpl userService;
     private UserMapper userMapper;
+    private final UserService userService;
 
-    @GetMapping
-    public List<UserDto> getAllUsers(){
-        return userService.findAllUsers()
-                .stream()
-                .map(userMapper::toDto)
-                .toList();
+//    @GetMapping
+//    public List<UserDto> getAllUsers(){
+//        return userService.findAllUsers()
+//                .stream()
+//                .map(userMapper::toDto)
+//                .toList();
+@GetMapping
+public List<UserDto> getAllUsers() {
+    return userService.findAllUsers()
+            .stream()
+            .map(user -> new UserDto(
+                    user.getName(),
+                    user.getSurname(),
+                    user.getEmail(),
+                    user.getContactNumber()))
+            .toList();
     }
 }
