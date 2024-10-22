@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "products")
 @Getter
@@ -26,7 +28,7 @@ public class Product {
 
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "category_id", nullable = false)
-    private Categories book_category;
+    private Categories bookCategory;
 
     @Column(name = "book_description", nullable = false)
     private String book_description;
@@ -34,11 +36,20 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Double price;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Date createdAt;
+
     public Product(String title, String author, Categories book_category, String book_description, Double price) {
         this.title = title;
         this.author = author;
-        this.book_category = book_category;
+        this.bookCategory = book_category;
         this.book_description = book_description;
         this.price = price;
+    }
+
+    @PrePersist
+    protected void onCreate(){
+        this.createdAt = new Date();
     }
 }
