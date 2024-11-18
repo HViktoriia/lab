@@ -7,10 +7,10 @@ import lombok.*;
 @Entity
 @Table(name = "categories")
 @Getter
-@NoArgsConstructor
+//@NoArgsConstructor
 @ToString
 @Data
-//@Builder
+@Builder
 public class Categories {
 
     @Id
