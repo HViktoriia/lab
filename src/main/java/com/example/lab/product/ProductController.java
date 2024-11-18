@@ -1,9 +1,10 @@
 package com.example.lab.product;
 
 import java.util.*;
-import java.util.function.*;
+
 import com.example.lab.categories.Categories;
 import com.example.lab.categories.CategoriesRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -15,15 +16,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/rest/products")
 @RequiredArgsConstructor
+@Builder
 public class ProductController {
     private ProductMapper productMapper;
     private final ProductService productService;
-    private final CategoriesRepository categoriesRepository;
+    private CategoriesRepository categoriesRepository;
 
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductDto createNewProduct(@RequestBody
+    public ProductDto addProduct(@RequestBody
                                        @Validated ProductCreationRequest productCreationRequest){
         Categories category;
         Optional<Categories> optionalCategories = Optional.ofNullable(categoriesRepository.findByName(String.valueOf(productCreationRequest.getCategoryName())));
@@ -34,15 +36,8 @@ public class ProductController {
             category = categoriesRepository.save(category);
         }
 
-        Product newProduct = new Product(
-                productCreationRequest.getTitle(),
-                productCreationRequest.getAuthor(),
-                productCreationRequest.getCategoryName(),
-                productCreationRequest.getDescription(),
-                productCreationRequest.getPrice()
-        );
-        Product savedProduct = productService.saveProduct(newProduct);
-    return productMapper.productDto(newProduct);
+        Product newProduct = productService.addProduct(productCreationRequest);
+    return new ProductDto(newProduct.getTitle(), newProduct.getAuthor(), newProduct.getBookCategory(), newProduct.getBook_description(), newProduct.getPrice());
     }
 
     @GetMapping
@@ -66,11 +61,30 @@ public class ProductController {
 //                .map(productMapper::productDto)
 //                .collect(Collectors.toList());
 //    }
-    @GetMapping(params = {"bookId"})
-    public List<ProductDto> getProductsById(@RequestParam Long bookId){
-        return productService.findAllProductsById(bookId).stream()
+    @GetMapping(path = {"id"})
+    public List<ProductDto> getProductsById(@PathVariable("id") Long id){
+        return productService.findAllProductsById(id).stream()
                 .map(productMapper::productDto)
                 .collect(Collectors.toList());
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDto updateProduct (@PathVariable Long id, @RequestBody @Validated ProductUpdateRequest productUpdateRequest){
+        Product updatedProduct = productService.updateProduct(id, productUpdateRequest);
+        return new ProductDto(
+                updatedProduct.getTitle(),
+                updatedProduct.getAuthor(),
+                updatedProduct.getBookCategory(),
+                updatedProduct.getBook_description(),
+                updatedProduct.getPrice()
+        );
+    }
+
+    @DeleteMapping(path = "{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable Long id){
+        productService.deleteProduct(id);
     }
 
     @GetMapping("/category/{categoryName}")

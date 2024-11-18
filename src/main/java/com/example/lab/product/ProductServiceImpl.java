@@ -31,14 +31,46 @@ public class ProductServiceImpl implements ProductService{
 //    public List<Product> findAllProductsByCategoryId(Long categoryId){
 //        return productRepository.findByCategoryId(categoryId);
 //    }
-    @Override
-    public Optional<Product> findAllProductsById(Long bookId){
+@Override
+public Optional<Product> findAllProductsById(Long bookId){
         return productRepository.findById(bookId);
     }
 
     @Override
     public List<Product> findAllProductsByCategory(String categories) {
         return List.of();
+    }
+    @Override
+    public Product updateProduct(Long id, ProductUpdateRequest productUpdateRequest){
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product with ID " + id + " does not exist"));
+        if (productUpdateRequest.getTitle() != null) {
+            existingProduct.setTitle(productUpdateRequest.getTitle());
+        }
+        if (productUpdateRequest.getAuthor() != null) {
+            existingProduct.setAuthor(productUpdateRequest.getAuthor());
+        }
+        if (productUpdateRequest.getCategoryId() != null) {
+            Categories category = categoriesRepository.findById(productUpdateRequest.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category with ID " + productUpdateRequest.getCategoryId() + " does not exist"));
+            existingProduct.setBookCategory(category);
+        }
+        if (productUpdateRequest.getBook_description() != null) {
+            existingProduct.setBook_description(productUpdateRequest.getBook_description());
+        }
+        if (productUpdateRequest.getPrice() != null) {
+            existingProduct.setPrice(productUpdateRequest.getPrice());
+        }
+
+        return productRepository.save(existingProduct);
+
+    }
+
+    @Override
+    public void deleteProduct(Long id){
+        Product product = productRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Product with ID " + id + " not found"));
+        productRepository.delete(product);
     }
 
     @Override

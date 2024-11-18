@@ -2,21 +2,21 @@ package com.example.lab.categories;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name = "categories")
 @Getter
 @NoArgsConstructor
 @ToString
+@Data
+//@Builder
 public class Categories {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long categories_id;
+    private Long categoriesId;
 
     @Column(name = "name", nullable = false)
     private String name;

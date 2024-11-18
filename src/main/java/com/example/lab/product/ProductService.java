@@ -9,9 +9,9 @@ public interface ProductService {
     Product saveProduct(Product product);
     List<Product>findAllProducts();
     List<Product> findAllProductsByCategory(Categories categories);
+    Optional<Product> findAllProductsById(Long bookId);
+    void deleteProduct(Long id);
     List<Product> findAllProductsByCategory(String categories);
-    Optional<Product> findAllProductsById(Long id);
-    //List<Product>findAllProductsByCategoryId(Long id);
-
+    Product updateProduct(Long id, ProductUpdateRequest productUpdateRequest);
     Product addProduct(ProductCreationRequest productCreationRequest);
 }

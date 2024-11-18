@@ -2,17 +2,17 @@ package com.example.lab.product;
 
 import com.example.lab.categories.Categories;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "products")
 @Getter
-@NoArgsConstructor
+//@NoArgsConstructor
 @ToString
+@Data
+@Builder
 public class Product {
 
     @Id
@@ -28,7 +28,7 @@ public class Product {
 
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "category_id", nullable = false)
-    private Categories bookCategory;
+    private String bookCategory;
 
     @Column(name = "book_description", nullable = false)
     private String book_description;
@@ -40,7 +40,7 @@ public class Product {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;
 
-    public Product(String title, String author, Categories book_category, String book_description, Double price) {
+    public Product(String title, String author, String book_category, String book_description, Double price) {
         this.title = title;
         this.author = author;
         this.bookCategory = book_category;

@@ -17,7 +17,7 @@ public final class ProductCreationRequest {
     private final String author;
 
     @NotNull(message = "Category cannot be null")
-    private final Categories categoryName;
+    private final String categoryName;
 
     @NotNull(message = "Description cannot be null")
     private final String description;
@@ -29,7 +29,7 @@ public final class ProductCreationRequest {
     @JsonCreator
     ProductCreationRequest(@JsonProperty("title") String title,
                            @JsonProperty("author") String author,
-                           @JsonProperty("categoryName") Categories categoryName,
+                           @JsonProperty("categoryName") String categoryName,
                            @JsonProperty("description") String description,
                            @JsonProperty("price") Double price){
         this.title = title;

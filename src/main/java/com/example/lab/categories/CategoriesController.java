@@ -1,15 +1,17 @@
 package com.example.lab.categories;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/rest/categories")
 @RequiredArgsConstructor
+@Builder
 public class CategoriesController {
 
     private CategoriesMapper categoriesMapper;
@@ -24,4 +26,12 @@ public class CategoriesController {
                         categories.getDescription()))
                         .toList();
     }
+
+    @PostMapping("/add")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoriesDto addCategory(@RequestBody @Validated CategoriesCreationRequest categoriesCreationRequest){
+        Categories categories = categoriesService.addCategory(categoriesCreationRequest);
+        return new CategoriesDto(categories.getName(), categories.getDescription());
+    }
+
 }
