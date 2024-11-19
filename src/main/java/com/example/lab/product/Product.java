@@ -52,4 +52,12 @@ public class Product {
     protected void onCreate(){
         this.createdAt = new Date();
     }
+
+    public String getBook_description() {
+        return book_description;
+    }
+
+    public void setBook_description(String book_description) {
+        this.book_description = book_description;
+    }
 }

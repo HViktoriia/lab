@@ -15,7 +15,7 @@ public class ProductUpdateRequest {
 
     private String author;
 
-    private Categories bookCategory;
+    private String bookCategory;
 
     private String book_description;
     private Long categoryId;
@@ -25,7 +25,7 @@ public class ProductUpdateRequest {
     public ProductUpdateRequest(
             @JsonProperty("title") String title,
             @JsonProperty("author") String author,
-            @JsonProperty("bookCategory") Categories bookCategory,
+            @JsonProperty("bookCategory") String bookCategory,
             @JsonProperty("book_description") String book_description,
             @JsonProperty("price") Double price) {
         this.title = title;

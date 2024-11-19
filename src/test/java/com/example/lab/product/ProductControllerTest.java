@@ -6,12 +6,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvcBuilder;
+
+import static net.bytebuddy.matcher.ElementMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -85,5 +92,46 @@ class ProductControllerTest {
                 .andDo(log())
                 .andExpect(status().isCreated())
                 .andExpect((ResultMatcher) jsonPath("$.name").value(product.getTitle()));
+    }
+
+    @Test
+    void updateProduct_ShouldReturnUpdatedProduct() throws Exception {
+        Long productId = 1L;
+        ProductUpdateRequest updateRequest = new ProductUpdateRequest(
+                "Updated Title",
+                "Updated Author",
+                "fantasy",
+                "Updated Description",
+                199.99
+        );
+        Product updatedProduct = new Product(
+                "Updated Title",
+                "Updated Author",
+                "Updated Category",
+                "Updated Description",
+                199.99
+        );
+
+        // Mock the service behavior
+        when(productServiceMock.updateProduct(eq(productId), any(ProductUpdateRequest.class))).thenReturn(updatedProduct);
+        String updateRequestTest = ("""
+                                {
+                                    "category": %s, 
+                                    "name": "%s" 
+                                    "title": "Updated Title",
+                                    "author": "Updated Author",
+                                    "categoryId": 2,
+                                    "description": "Updated Description",
+                                    "price": 199.99
+                                }
+                                """);
+        mockMvc.perform((RequestBuilder) patch("/rest/products/{id}", productId).contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.valueOf(updateRequestTest)))
+                .andExpect(status().isOk())
+                .andExpect((ResultMatcher) jsonPath("$.title", is(updatedProduct.getTitle())))
+                .andExpect((ResultMatcher) jsonPath("$.author", is(updatedProduct.getAuthor())))
+                .andExpect((ResultMatcher) jsonPath("$.bookCategory", is(updatedProduct.getBookCategory())))
+                .andExpect((ResultMatcher) jsonPath("$.bookDescription", is(updatedProduct.getBook_description())))
+                .andExpect((ResultMatcher) jsonPath("$.price", is(updatedProduct.getPrice())));
     }
 }
